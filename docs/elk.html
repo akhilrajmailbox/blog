@@ -6,26 +6,20 @@
 <p><a href="https://medium.com/faun/https-medium-com-thakur-vaibhav23-ha-es-k8s-7e655c1b7b61">kudos</a></p>
 <p><a href="https://www.datadoghq.com/blog/elasticsearch-game-day/">help</a></p>
 <p><a href="https://github.com/beshu-tech/readonlyrest-docs/blob/master/elasticsearch.md">readonlyrest-docs</a></p>
-<link type="text/css" rel="stylesheet" media="screen" href="./default.css" id="default-css" />
-<h1 id="current-software">Current software</h1>
-<p id="repository-visit">Do you want to visit the <a href="https://github.com/akhilrajmailbox/ElasticSearch-Kibana">Repository</a> ?</p>
+<h2 id="current-software">Current software</h2>
 <ul>
 <li>Alpine Linux 3.8</li>
 <li>OpenJDK JRE 8u171</li>
 <li>Elasticsearch 6.8.0 -- 6.8.0</li>
 </ul>
-<link type="text/css" rel="stylesheet" media="screen" href="./default.css" id="default-css" />
-<h1 id="kubernetes-cluster-requirement">Kubernetes Cluster Requirement</h1>
-<p id="repository-visit">Do you want to visit the <a href="https://github.com/akhilrajmailbox/ElasticSearch-Kibana">Repository</a> ?</p>
+<h2 id="kubernetes-cluster-requirement">Kubernetes Cluster Requirement</h2>
 <ul>
 <li>cluster of 3 worker nodes (HA Configuration)</li>
 <li>medium / high IOPS Required for the vm type</li>
 <li>2vcpu and 8 GB RAM for each worker ndoes</li>
 <li>premium Storageclass needed for better performance</li>
 </ul>
-<link type="text/css" rel="stylesheet" media="screen" href="./default.css" id="default-css" />
-<h1 id="es-cluster-features">ES Cluster Features</h1>
-<p id="repository-visit">Do you want to visit the <a href="https://github.com/akhilrajmailbox/ElasticSearch-Kibana">Repository</a> ?</p>
+<h2 id="es-cluster-features">ES Cluster Features</h2>
 <ul>
 <li>High Available (HA) Cluster on Kubernetes</li>
 <li>Self Healing Configuration for all nodes</li>
@@ -43,9 +37,7 @@
 </ul>
 </li>
 </ul>
-<link type="text/css" rel="stylesheet" media="screen" href="./default.css" id="default-css" />
-<h1 id="authentication-for-elasticsearch-and-kibana">Authentication for ElasticSearch and Kibana</h1>
-<p id="repository-visit">Do you want to visit the <a href="https://github.com/akhilrajmailbox/ElasticSearch-Kibana">Repository</a> ?</p>
+<h2 id="authentication-for-elasticsearch-and-kibana">Authentication for ElasticSearch and Kibana</h2>
 <pre><code>ES version 6.8.0 Docker image have plugin readonlyrest plugin, and so youy can enable the authentication for elasticsearch with the following environment Variables</code></pre><p>This kubernetes deployment by default enabling the authetication for elasticsearch and kibana. If you don&#39;t need authetication you can simply remove the <code>AUTH_CONFIG</code> environment variable.</p>
 <p>These are the default Credentials for the deployment until and unless you remove the <code>AUTH_CONFIG</code> environment variable.</p>
 <p>The Usernames are hardcoded but you can override this credentials (only passwords) by updating these environment variables from Configmap (I already gave it as an example in the deployment part) or from secrets in kubernetes</p>
@@ -80,44 +72,42 @@
 </tbody></table>
 <p><strong>Note : For Kibana Auth Configiuration while deploying, you have to configure User : kibanAdmin and Pass : KIBANA_ADMIN_PASSWORD</strong></p>
 <p><strong>Note:</strong> <code>x-pack-ml</code> module is forcibly disabled as it&#39;s not supported on Alpine Linux.</p>
-<link type="text/css" rel="stylesheet" media="screen" href="./default.css" id="default-css" />
-<h1 id="kubernetes-deployment">Kubernetes Deployment</h1>
-<p id="repository-visit">Do you want to visit the <a href="https://github.com/akhilrajmailbox/ElasticSearch-Kibana">Repository</a> ?</p>
+<h2 id="kubernetes-deployment">Kubernetes Deployment</h2>
 <p><strong>Note: These following environment and its default values are giving below, it is customised for dockerized deployment in K8s but will degrade the performance (MEMORY_LOCK false)</strong></p>
 <pre><code>MEMORY_LOCK false
 DISCOVERY_SERVICE elasticsearch-discovery</code></pre><p>kubernetes issue : <a href="https://hub.helm.sh/charts/stable/elasticsearch">Not support new ES version</a></p>
 <p><strong>Run these commands from <code>Kubernetes-Deployment</code> Folder</strong></p>
-<h2 id="create-namespace-for-elasticsearch-deployment">Create Namespace for Elasticsearch Deployment</h2>
-<pre><code>kubectl apply -f es-namespace.yaml</code></pre><h2 id="configure-credentials">Configure Credentials</h2>
-<pre><code>kubectl apply -f ElasticSearch/es-auth-configmap.yaml</code></pre><h2 id="deploy-master-nodes">Deploy master nodes</h2>
+<h3 id="create-namespace-for-elasticsearch-deployment">Create Namespace for Elasticsearch Deployment</h3>
+<pre><code>kubectl apply -f es-namespace.yaml</code></pre><h3 id="configure-credentials">Configure Credentials</h3>
+<pre><code>kubectl apply -f ElasticSearch/es-auth-configmap.yaml</code></pre><h3 id="deploy-master-nodes">Deploy master nodes</h3>
 <pre><code>kubectl apply -f ElasticSearch/es-master-deployment.yaml
 kubectl apply -f ElasticSearch/es-master-service.yaml
-kubectl -n elasticsearch get pods</code></pre><h2 id="deploy-data-nodes">Deploy data nodes</h2>
+kubectl -n elasticsearch get pods</code></pre><h3 id="deploy-data-nodes">Deploy data nodes</h3>
 <pre><code>kubectl apply -f ElasticSearch/es-data-storageclass.yaml
 kubectl get storageclass
 kubectl apply -f ElasticSearch/es-data-deployment.yaml
 kubectl apply -f ElasticSearch/es-data-service.yaml
-kubectl -n elasticsearch get pods</code></pre><h2 id="deploy-client-nodes">Deploy client nodes</h2>
+kubectl -n elasticsearch get pods</code></pre><h3 id="deploy-client-nodes">Deploy client nodes</h3>
 <pre><code>kubectl apply -f ElasticSearch/es-client-deployment.yaml
 kubectl apply -f ElasticSearch/es-client-service.yaml
 kubectl -n elasticsearch get pods</code></pre><p>ElasticSearch can access on this url : <code>http://&lt;&lt;es_client_loadbalancer_IPAddress&gt;&gt;:9200</code></p>
-<h2 id="deploy-elastic-hq-monitoring-tool">Deploy Elastic HQ (Monitoring tool)</h2>
+<h3 id="deploy-elastic-hq-monitoring-tool">Deploy Elastic HQ (Monitoring tool)</h3>
 <p><strong>Update the ConfigMap : <code>es-hq-configmap.yaml</code> with the basic-auth username and password</strong></p>
 <pre><code>kubectl apply -f ES-HQ/es-hq-configmap.yaml
 kubectl apply -f ES-HQ/es-hq-deployment.yaml
 kubectl apply -f ES-HQ/es-hq-service.yaml
 kubectl -n elasticsearch get pods</code></pre><p>Elastic HQ can access on this url : <code>http://&lt;&lt;es_HQ_loadbalancer_IPAddress&gt;&gt;</code></p>
-<h2 id="deploy-kibana-server">Deploy Kibana Server</h2>
+<h3 id="deploy-kibana-server">Deploy Kibana Server</h3>
 <pre><code>kubectl -n elasticsearch create configmap kibana-config-cm --from-file=kibana/kibana.yml
 kubectl apply -f kibana/kibana-deployment.yaml
 kubectl apply -f kibana/kibana-service.yaml
 kubectl -n elasticsearch get pods</code></pre><p>kibana can access on this url : <code>http://&lt;&lt;kibana_loadbalancer_IPAddress&gt;&gt;/app/kibana</code></p>
-<h2 id="deploy-elastic-apm-server">Deploy Elastic APM Server</h2>
+<h3 id="deploy-elastic-apm-server">Deploy Elastic APM Server</h3>
 <pre><code>kubectl -n elasticsearch create configmap apm-server-cm --from-file=ES-APM/apm-server.yml
 kubectl apply -f ES-APM/es-apm-deployment.yaml
 kubectl apply -f ES-APM/es-apm-service.yaml
 kubectl -n elasticsearch get pods</code></pre><p>Elastic APM can access on this url : <code>http://&lt;&lt;es_APM_loadbalancer_IPAddress&gt;&gt;</code></p>
-<h2 id="check-the-services-pods-pvc-and-pv">Check the services, pods, pvc and pv</h2>
+<h3 id="check-the-services-pods-pvc-and-pv">Check the services, pods, pvc and pv</h3>
 <pre><code>kubectl -n elasticsearch get pods
 kubectl -n elasticsearch get services
 kubectl -n elasticsearch get pvc
@@ -311,47 +301,39 @@ a backup repository:</p>
 <pre><code>sudo ES_PATH_CONF=/etc/elasticsearch/es-node-2 /usr/share/elasticsearch/bin/elasticsearch-plugin install repository-azure</code></pre></li>
 <li><p>change the configuration:-</p>
 <pre><code>sudo nano /etc/elasticsearch/es-node-2/elasticsearch.yml
-</code></pre></li>
+cloud.azure.storage.default.account: xxxxxxxxxxx
+cloud.azure.storage.default.key: xxxxxx</code></pre></li>
+<li><p>Restart ES Service:- </p>
+<pre><code>sudo systemctl restart es-node-2_elasticsearch.service</code></pre></li>
+<li><p>create Repo:- </p>
+</li>
 </ul>
-<p>cloud.azure.storage.default.account: xxxxxxxxxxx
-cloud.azure.storage.default.key: xxxxxx</p>
-<pre><code>
-* Restart ES Service:- </code></pre><p>sudo systemctl restart es-node-2_elasticsearch.service</p>
-<pre><code>
-* create Repo:- 
-</code></pre><p>curl -XPUT &#39;<a href="http://localhost:9200/_snapshot/azurebackup&#39;">http://localhost:9200/_snapshot/azurebackup&#39;</a> -H &#39;Content-Type: application/json&#39; -d &#39;{ &quot;type&quot;: &quot;azure&quot;, &quot;settings&quot;: { &quot;container&quot;: &quot;elasticsearch-snapshots&quot;, &quot;base_path&quot;: &quot;sunbirddevtele&quot;} }&#39;</p>
-<pre><code>
-* create Snapshot:-</code></pre><p>curl -XPUT &#39;<a href="http://localhost:9200/_snapshot/azurebackup/snapshot_1&#39;">http://localhost:9200/_snapshot/azurebackup/snapshot_1&#39;</a> -H &#39;Content-Type: application/json&#39; -d &#39;{ &quot;indices&quot;:&quot;*&quot;,&quot;include_global_state&quot;:false }&#39;</p>
-<pre><code>
-* check status of backup:-</code></pre><p>curl -XGET &#39;<a href="http://localhost:9200/_snapshot/azurebackup/_all&#39;">http://localhost:9200/_snapshot/azurebackup/_all&#39;</a></p>
-<pre><code>
-
-### Restore
-
-* Install plugin:-</code></pre><p>sudo ES_PATH_CONF=/etc/elasticsearch/es-node-2 /usr/share/elasticsearch/bin/elasticsearch-plugin install repository-azure</p>
-<pre><code>
-* change the configuration:-</code></pre><p>sudo nano /etc/elasticsearch/es-node-2/elasticsearch.yml</p>
-<p>cloud.azure.storage.default.account: xxxxxxxxxxx
-cloud.azure.storage.default.key: xxxxxx</p>
-<pre><code>
-* Restart ES Service:- </code></pre><p>sudo systemctl restart es-node-1_elasticsearch.service</p>
-<pre><code>
-* create Repo:-</code></pre><p>curl -XPUT &#39;<a href="http://localhost:9200/_snapshot/azurebackup&#39;">http://localhost:9200/_snapshot/azurebackup&#39;</a> -H &#39;Content-Type: application/json&#39; -d &#39;{ &quot;type&quot;: &quot;azure&quot;, &quot;settings&quot;: { &quot;container&quot;: &quot;elasticsearch-snapshots&quot;, &quot;base_path&quot;: &quot;sunbirddevtele&quot;} }&#39;</p>
-<pre><code>
-* Delete unwanted indices:- </code></pre><p>curl -XDELETE <a href="http://localhost:9200/_all">http://localhost:9200/_all</a></p>
-<pre><code>
-* Restore from snapshot:-</code></pre><p>curl -XPOST &#39;<a href="http://localhost:9200/_snapshot/azurebackup/snapshot_1/_restore&#39;">http://localhost:9200/_snapshot/azurebackup/snapshot_1/_restore&#39;</a></p>
-<pre><code>
-
-### Reference links ::
-
-[snapshots-restore](https://github.com/project-sunbird/sunbird-devops/wiki/elasticsearch-backup-and-restore-for-telemetry-and-composite-search-to-azure-blob)
-
-[es-azure snapshots plugin](https://www.elastic.co/guide/en/elasticsearch/plugins/6.8/repository-azure.html)
-
-[es-azure plugin description](https://www.elastic.co/guide/en/elasticsearch/plugins/7.4/repository-azure-repository-settings.html)
-
-[blob-storage and snapshots 1](https://azure.microsoft.com/en-in/blog/archive-elasticsearch-indices-to-azure-blob-storage-using-the-azure-cloud-plugin/)
-
-[blob-storage and snapshots 2](https://stackoverflow.com/questions/54113059/elasticsearch-snapshot-creation-understanding-how-where-to-store-them-to)
-</code></pre>
+<pre><code>curl -XPUT &#39;http://localhost:9200/_snapshot/azurebackup&#39; -H &#39;Content-Type: application/json&#39; -d &#39;{ &quot;type&quot;: &quot;azure&quot;, &quot;settings&quot;: { &quot;container&quot;: &quot;elasticsearch-snapshots&quot;, &quot;base_path&quot;: &quot;sunbirddevtele&quot;} }&#39;</code></pre><ul>
+<li><p>create Snapshot:-</p>
+<pre><code>curl -XPUT &#39;http://localhost:9200/_snapshot/azurebackup/snapshot_1&#39; -H &#39;Content-Type: application/json&#39; -d &#39;{ &quot;indices&quot;:&quot;*&quot;,&quot;include_global_state&quot;:false }&#39;</code></pre></li>
+<li><p>check status of backup:-</p>
+<pre><code>curl -XGET &#39;http://localhost:9200/_snapshot/azurebackup/_all&#39;</code></pre></li>
+</ul>
+<h3 id="restore">Restore</h3>
+<ul>
+<li><p>Install plugin:-</p>
+<pre><code>sudo ES_PATH_CONF=/etc/elasticsearch/es-node-2 /usr/share/elasticsearch/bin/elasticsearch-plugin install repository-azure</code></pre></li>
+<li><p>change the configuration:-</p>
+<pre><code>sudo nano /etc/elasticsearch/es-node-2/elasticsearch.yml
+cloud.azure.storage.default.account: xxxxxxxxxxx
+cloud.azure.storage.default.key: xxxxxx</code></pre></li>
+<li><p>Restart ES Service:- </p>
+<pre><code>sudo systemctl restart es-node-1_elasticsearch.service</code></pre></li>
+<li><p>create Repo:-</p>
+<pre><code>curl -XPUT &#39;http://localhost:9200/_snapshot/azurebackup&#39; -H &#39;Content-Type: application/json&#39; -d &#39;{ &quot;type&quot;: &quot;azure&quot;, &quot;settings&quot;: { &quot;container&quot;: &quot;elasticsearch-snapshots&quot;, &quot;base_path&quot;: &quot;sunbirddevtele&quot;} }&#39;</code></pre></li>
+<li><p>Delete unwanted indices:- </p>
+<pre><code>curl -XDELETE http://localhost:9200/_all</code></pre></li>
+<li><p>Restore from snapshot:-</p>
+<pre><code>curl -XPOST &#39;http://localhost:9200/_snapshot/azurebackup/snapshot_1/_restore&#39;</code></pre></li>
+</ul>
+<h3 id="reference-links-">Reference links ::</h3>
+<p><a href="https://github.com/project-sunbird/sunbird-devops/wiki/elasticsearch-backup-and-restore-for-telemetry-and-composite-search-to-azure-blob">snapshots-restore</a></p>
+<p><a href="https://www.elastic.co/guide/en/elasticsearch/plugins/6.8/repository-azure.html">es-azure snapshots plugin</a></p>
+<p><a href="https://www.elastic.co/guide/en/elasticsearch/plugins/7.4/repository-azure-repository-settings.html">es-azure plugin description</a></p>
+<p><a href="https://azure.microsoft.com/en-in/blog/archive-elasticsearch-indices-to-azure-blob-storage-using-the-azure-cloud-plugin/">blob-storage and snapshots 1</a></p>
+<p><a href="https://stackoverflow.com/questions/54113059/elasticsearch-snapshot-creation-understanding-how-where-to-store-them-to">blob-storage and snapshots 2</a></p>
