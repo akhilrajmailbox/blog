@@ -1,0 +1,133 @@
+<link type="text/css" rel="stylesheet" media="screen" href="./default.css" id="default-css" />
+<h1 id="hadoop-distributed-file-system-hdfs-cluster-on-aks">Hadoop Distributed File System (HDFS)-Cluster On AKS</h1>
+<p id="repository-visit">Do you want to visit the <a href="https://github.com/akhilrajmailbox/HDFS-Cluster">Repository</a> ?</p>
+<p><strong>Tested on Azure, This deployment will work in any other cloud but have to change the configurations for storageclass and loadbalancer configurations</strong></p>
+<h2 id="what-is-hdfs">What is HDFS?</h2>
+<ul>
+<li><p>Namenode</p>
+<ul>
+<li>NameNode is the centerpiece of  HDFS.</li>
+<li>NameNode is also known as the Master</li>
+<li>NameNode only stores the metadata of HDFS – the directory tree of all files in the file system, and tracks the files across the cluster.</li>
+<li>NameNode does not store the actual data or the dataset. The data itself is actually stored in the DataNodes.</li>
+<li>NameNode knows the list of the blocks and its location for any given file in HDFS. With this information NameNode knows how to construct the file from blocks.</li>
+<li>NameNode is so critical to HDFS and when the NameNode is down, HDFS/Hadoop cluster is inaccessible and considered down.</li>
+<li>NameNode is a single point of failure in Hadoop cluster.</li>
+<li>NameNode is usually configured with a lot of memory (RAM). Because the block locations are help in main memory.</li>
+</ul>
+</li>
+<li><p>DataNode</p>
+<ul>
+<li>DataNode is responsible for storing the actual data in HDFS.</li>
+<li>DataNode is also known as the Slave</li>
+<li>NameNode and DataNode are in constant communication.</li>
+<li>When a DataNode starts up it announce itself to the NameNode along with the list of blocks it is responsible for.</li>
+<li>When a DataNode is down, it does not affect the availability of data or the cluster. NameNode will arrange for replication for the blocks managed by the DataNode that is not available.</li>
+<li>DataNode is usually configured with a lot of hard disk space. Because the actual data is stored in the DataNode.</li>
+</ul>
+</li>
+</ul>
+<h2 id="current-software">Current software</h2>
+<ul>
+<li>Alpine Linux 3.5</li>
+<li>OpenJDK 8</li>
+<li>Hadoop 3.2.1</li>
+</ul>
+<h2 id="kubernetes-cluster-requirement">Kubernetes Cluster Requirement</h2>
+<ul>
+<li>cluster of 3 worker nodes (HA Configuration)</li>
+<li>medium / high IOPS Required for the vm type</li>
+<li>4vcpu and 16 GB RAM for each worker ndoes</li>
+<li>premium Storageclass needed for better performance</li>
+</ul>
+<h2 id="hdfs-cluster-features">HDFS Cluster Features</h2>
+<ul>
+<li>High Available (HA) Cluster on Kubernetes</li>
+<li>Self Healing Configuration for all nodes (datanode and namenode)</li>
+<li>anytime can scale the cluster size (both horizontal and vertical)</li>
+<li>Authentication between nodes enabled with ssh and passwordless</li>
+<li>The default cluster have the following components (can be increase the number anytime without downtime)<ul>
+<li>Three namenode nodes<ul>
+<li>Three datanode nodes</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="environment-variables">Environment variables</h3>
+<p>This image can be configured by means of environment variables, that one can set on a <code>Deployment</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Variable Name</th>
+<th>Default Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>HDFS_MASTER</td>
+<td>true</td>
+</tr>
+<tr>
+<td>HDFS_MASTER_URL</td>
+<td>hdfs-master</td>
+</tr>
+<tr>
+<td>DATA_REPLICA</td>
+<td>1</td>
+</tr>
+<tr>
+<td>DATANODE_NAME</td>
+<td>localhost</td>
+</tr>
+</tbody></table>
+<h2 id="kubernetes-deployment">Kubernetes Deployment</h2>
+<p><strong>Run these commands from <code>Kubernetes</code> Folder</strong></p>
+<h3 id="create-namespace-for-elasticsearch-deployment">Create Namespace for Elasticsearch Deployment</h3>
+<pre><code>kubectl apply -f hdfs-namespace.yaml</code></pre><h3 id="create-fast-storageclass-for-datanode">create fast storageclass (for datanode)</h3>
+<pre><code>kubectl apply -f disk-storageclass.yaml
+kubectl get storageclass</code></pre><h3 id="create-azure-files-storageclass-for-namenode">create azure files storageclass (for namenode)</h3>
+<pre><code>kubectl apply -f azure-file-storageclass.yaml
+kubectl get storageclass
+kubectl apply -f azure-file-pvc-roles.yaml</code></pre><h3 id="deploy-namenodes">Deploy namenodes</h3>
+<pre><code>kubectl apply -f hdfs-namenode-pvc.yaml
+kubectl apply -f hdfs-namenode-deployment.yaml
+kubectl apply -f hdfs-namenode-service.yaml
+kubectl -n hdfs-cluster get pods</code></pre><h3 id="deploy-datanodes">Deploy datanodes</h3>
+<pre><code>kubectl apply -f hdfs-datanode-deployment.yaml
+kubectl -n hdfs-cluster get pods</code></pre><p><strong>You can check the status for the hdfs cluster by accessing the service withc we created in namenode section (hdfs-webui)</strong></p>
+<h2 id="easy-commands">Easy Commands</h2>
+<ul>
+<li><p>to list all nodes in HDFS cluster (run within the cluster)</p>
+<pre><code>hadoop dfsadmin -report</code></pre></li>
+<li><p>service management on hdfs cluster</p>
+<pre><code>hadoop-daemon.sh start [namenode | secondarynamenode | datanode | jobtracker | tasktracker]</code></pre></li>
+<li><p>hdfs url to access </p>
+<pre><code>hdfs://&lt;namenode&gt;:&lt;ipc_port&gt;
+</code></pre></li>
+</ul>
+<p>example : hdfs://10.50.144.32:9000/</p>
+<pre><code>
+* Test write access to the Hadoop cluster
+
+* Listing Files in HDFS</code></pre><p>hadoop fs -ls hdfs://10.50.144.32:9000/</p>
+<pre><code>
+* Inserting Data into HDFS (Transfer and store a data file from local systems to the Hadoop file system using the put command)</code></pre><p>hadoop fs -mkdir hdfs://10.50.144.32:9000/input 
+hadoop fs -put /path/to/file.txt hdfs://10.50.144.32:9000/input
+hadoop fs -ls hdfs://10.50.144.32:9000/input</p>
+<pre><code>
+* Retrieving Data from HDFS</code></pre><p>hadoop fs -cat hdfs://10.50.144.32:9000/input/file.txt
+hadoop fs -get hdfs://10.50.144.32:9000/input/file.txt /tmp/</p>
+<pre><code>
+* Delete data from HDFS (files and directory)</code></pre><p>hadoop fs -rm hdfs://10.50.144.32:9000/input/file.txt
+hadoop fs -rm -r hdfs://10.50.144.32:9000/input</p>
+<p>```</p>
+<p><strong>If Hadoop CLI does not return an error message, then your setup is correct</strong></p>
+<h2 id="reference-docs">Reference Docs</h2>
+<p><a href="https://www.linode.com/docs/databases/hadoop/how-to-install-and-set-up-hadoop-cluster/">reference</a></p>
+<p><a href="https://www.tutorialspoint.com/hadoop/hadoop_multi_node_cluster.htm">reference</a></p>
+<p><a href="https://blog.hasura.io/getting-started-with-hdfs-on-kubernetes-a75325d4178c/#f452">reference-on-kubernetes</a></p>
+<p><a href="https://dzone.com/articles/how-to-use-the-new-hdfs-intra-datanode-disk-balanc">reference-disk-balancer</a></p>
+<p><a href="https://www.edureka.co/blog/how-to-set-up-hadoop-cluster-with-hdfs-high-availability/">hadoop-cluster</a></p>
+<p><a href="http://blog.madhukaraphatak.com/secondary-namenode---what-it-really-do/">secondary-namenodes</a></p>
+<p><a href="https://docs.splunk.com/Documentation/HadoopConnect/1.2.5/DeployHadoopConnect/HadoopCLI">hadoop-cli</a></p>
+<p><a href="https://www.tutorialspoint.com/hadoop/hadoop_hdfs_operations.htm">hadoop-tutorialspoint</a></p>

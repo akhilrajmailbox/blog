@@ -1,0 +1,10 @@
+<link type="text/css" rel="stylesheet" media="screen" href="./default.css" id="default-css" />
+<h1 id="rabbitmq-cluster-on-azure-kubernetes-with-statefulsets">RabbitMQ cluster on Azure kubernetes with StatefulSets</h1>
+<p id="repository-visit">Do you want to visit the <a href="https://github.com/akhilrajmailbox/RabbitMQ">Repository</a> ?</p>
+<p>RabbitMQ is a general purpose messaging solution, often used to allow web servers to respond to requests quickly instead of being forced to perform resource-heavy procedures while the user waits for the result.</p>
+<h3 id="create-namespace-for-datamall-dependencies">Create Namespace for datamall dependencies</h3>
+<pre><code>kubectl create ns rabbitmq-cluster</code></pre><h3 id="configmap-for-rabbitmq-cluster">Configmap for RabbitMQ Cluster</h3>
+<pre><code>kubectl create secret generic rabbitmq-config --from-literal=erlang-cookie=c-is-for-cookie-thats-good-enough-for-me -n rabbitmq-cluster</code></pre><h3 id="create-custom-storageclass-with-parameter--allowvolumeexpansion">Create custom storageclass with parameter : &quot;allowVolumeExpansion&quot;</h3>
+<pre><code>kubectl apply -f pvc-storageclass.yaml</code></pre><h3 id="deploy-rabbitmq-cluster">Deploy RabbitMQ cluster</h3>
+<pre><code>kubectl apply -f rabbitmq-deployment.yaml -n rabbitmq-cluster</code></pre><h3 id="create-rabbitmq-service">Create RabbitMQ Service</h3>
+<pre><code>kubectl apply -f rabbitmq-service.yaml -n rabbitmq-cluster</code></pre><p><a href="https://wesmorgan.svbtle.com/rabbitmq-cluster-on-kubernetes-with-statefulsets">reference</a></p>

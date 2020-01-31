@@ -1,0 +1,141 @@
+<p>:car: :cloud: :cloud: :cloud: <em>Faster.....!</em></p>
+<link type="text/css" rel="stylesheet" media="screen" href="./default.css" id="default-css" />
+<h1 id="use-rancher-if-you-need">Use Rancher if you need....!</h1>
+<p id="repository-visit">Do you want to visit the <a href="https://github.com/akhilrajmailbox/Prometheus-Grafana">Repository</a> ?</p>
+<pre><code>docker run -d --restart=unless-stopped -p 80:80 -p 443:443 rancher/rancher</code></pre><p>access the ui &gt;&gt; do the basic configuration, credentials, secondary user with limited permission for managing  and configure grafana</p>
+<link type="text/css" rel="stylesheet" media="screen" href="./default.css" id="default-css" />
+<h1 id="creating-admin-privileges-for-the-kube-system-namespace">creating admin privileges for the kube-system namespace</h1>
+<p id="repository-visit">Do you want to visit the <a href="https://github.com/akhilrajmailbox/Prometheus-Grafana">Repository</a> ?</p>
+<pre><code>kubectl create serviceaccount --namespace kube-system tiller
+kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
+kubectl patch deploy --namespace kube-system tiller-deploy -p &#39;{&quot;spec&quot;:{&quot;template&quot;:{&quot;spec&quot;:{&quot;serviceAccount&quot;:&quot;tiller&quot;}}}}&#39;      
+helm init --service-account tiller --upgrade</code></pre><p><em>prometheus and grafana in eks (macos will not work for array [0] use ubuntu helm) ::</em></p>
+<p><a href="https://eksworkshop.com/monitoring/cleanup/">link 1</a></p>
+<p><a href="https://docs.aws.amazon.com/eks/latest/userguide/prometheus.html">link 2</a></p>
+<link type="text/css" rel="stylesheet" media="screen" href="./default.css" id="default-css" />
+<h1 id="raw-metrics">Raw Metrics</h1>
+<p id="repository-visit">Do you want to visit the <a href="https://github.com/akhilrajmailbox/Prometheus-Grafana">Repository</a> ?</p>
+<p>Make sure that your kubernetes cluster giving you the metrics, if not you have to use some other services in order to achieve it...</p>
+<link type="text/css" rel="stylesheet" media="screen" href="./default.css" id="default-css" />
+<pre><code>kubectl get --raw /metrics</code></pre><h1 id="make-sure-that-helm-installed-in-your-system">make sure that helm installed in your system:</h1>
+<p id="repository-visit">Do you want to visit the <a href="https://github.com/akhilrajmailbox/Prometheus-Grafana">Repository</a> ?</p>
+<link type="text/css" rel="stylesheet" media="screen" href="./default.css" id="default-css" />
+<pre><code>helm ls</code></pre><h1 id="create-namespace-and-prometheus-with-persistentvolume">Create namespace and prometheus with persistentVolume:</h1>
+<p id="repository-visit">Do you want to visit the <a href="https://github.com/akhilrajmailbox/Prometheus-Grafana">Repository</a> ?</p>
+<p><em>Create the namespace</em></p>
+<pre><code>kubectl create namespace prometheus</code></pre><p><em>Create prometheus with persistentVolume, by default it will use 2 GB and 8 GB for each services</em></p>
+<pre><code>helm install stable/prometheus \
+    --name prometheus \
+    --namespace prometheus \
+    --set alertmanager.persistentVolume.enabled=true \
+    --set server.persistentVolume.enabled=true \
+    --set alertmanager.persistentVolume.storageClass=&quot;gp2&quot; \
+<link type="text/css" rel="stylesheet" media="screen" href="./default.css" id="default-css" />
+    --set server.persistentVolume.storageClass=&quot;gp2&quot;</code></pre><h1 id="check-all-pods-and-services">check all pods and services:</h1>
+<p id="repository-visit">Do you want to visit the <a href="https://github.com/akhilrajmailbox/Prometheus-Grafana">Repository</a> ?</p>
+<link type="text/css" rel="stylesheet" media="screen" href="./default.css" id="default-css" />
+<pre><code>kubectl get all -n prometheus</code></pre><h1 id="test-your-prometheus-from-your-local-system-with-port-forward">test your prometheus from your local system with port forward:</h1>
+<p id="repository-visit">Do you want to visit the <a href="https://github.com/akhilrajmailbox/Prometheus-Grafana">Repository</a> ?</p>
+<pre><code>kubectl port-forward -n prometheus deploy/prometheus-server 8080:9090</code></pre><p><a href="http://127.0.0.1:8080/">check 1</a></p>
+<p><a href="http://127.0.0.1:8080/targets">check 2</a></p>
+<link type="text/css" rel="stylesheet" media="screen" href="./default.css" id="default-css" />
+<h1 id="create-namespace-and-grafana-with-persistentvolume">Create namespace and grafana with persistentVolume:</h1>
+<p id="repository-visit">Do you want to visit the <a href="https://github.com/akhilrajmailbox/Prometheus-Grafana">Repository</a> ?</p>
+<p><em>Create the namespace</em></p>
+<pre><code>kubectl create namespace grafana</code></pre><h2 id="without-ssl-configuration">without ssl configuration</h2>
+<p><em>Configuring grafana without ssl configuration</em></p>
+<pre><code>helm install stable/grafana \
+    --name grafana \
+    --namespace grafana \
+    --set persistence.enabled=true \
+    --set persistence.storageClassName=&quot;gp2&quot; \
+    --set adminPassword=&quot;MyPassAlwaysSecure&quot; \
+    --set datasources.&quot;datasources\.yaml&quot;.apiVersion=1 \
+    --set datasources.&quot;datasources\.yaml&quot;.datasources[0].name=Prometheus \
+    --set datasources.&quot;datasources\.yaml&quot;.datasources[0].type=prometheus \
+    --set datasources.&quot;datasources\.yaml&quot;.datasources[0].url=http://prometheus-server.prometheus.svc.cluster.local \
+    --set datasources.&quot;datasources\.yaml&quot;.datasources[0].access=proxy \
+    --set datasources.&quot;datasources\.yaml&quot;.datasources[0].isDefault=true \
+    --set service.type=LoadBalancer</code></pre><h2 id="with-ssl-configuration">with ssl configuration</h2>
+<p><em>Configuring grafana with ssl certificates</em></p>
+<pre><code>helm install stable/grafana \
+    --name grafana \
+    --namespace grafana \
+    --set persistence.enabled=true \
+    --set persistence.storageClassName=&quot;gp2&quot; \
+    --set adminPassword=&quot;MyPassAlwaysSecure&quot; \
+    --set datasources.&quot;datasources\.yaml&quot;.apiVersion=1 \
+    --set datasources.&quot;datasources\.yaml&quot;.datasources[0].name=Prometheus \
+    --set datasources.&quot;datasources\.yaml&quot;.datasources[0].type=prometheus \
+    --set datasources.&quot;datasources\.yaml&quot;.datasources[0].url=http://prometheus-server.prometheus.svc.cluster.local \
+    --set datasources.&quot;datasources\.yaml&quot;.datasources[0].access=proxy \
+    --set datasources.&quot;datasources\.yaml&quot;.datasources[0].isDefault=true \
+    --set service.type=LoadBalancer \
+    --set service.port=443 \
+    --set service.annotations.&quot;service\.beta\.kubernetes\.io/aws-load-balancer-backend-protocol&quot;=http \
+    --set service.annotations.&quot;service\.beta\.kubernetes\.io/aws-load-balancer-extra-security-groups&quot;=sg-25135300356456469 \
+    --set service.annotations.&quot;service\.beta\.kubernetes\.io/aws-load-balancer-ssl-cert&quot;=arn:aws:acm:us-east-1:5414653165468143:certificate/09c53c254523-5423-5-14251-dcaf7a9e5b \
+    --set service.annotations.&quot;service\.beta\.kubernetes\.io/aws-load-balancer-ssl-ports&quot;=https</code></pre><p><em>edit the service manually in order to accept ssl ceertificates</em></p>
+<p>from &gt;&gt;</p>
+<pre><code>  ports:
+  - name: service</code></pre><p>to &gt;&gt;</p>
+<pre><code>  ports:
+<link type="text/css" rel="stylesheet" media="screen" href="./default.css" id="default-css" />
+  - name: https</code></pre><h1 id="check-all-pods-and-services-1">check all pods and services</h1>
+<p id="repository-visit">Do you want to visit the <a href="https://github.com/akhilrajmailbox/Prometheus-Grafana">Repository</a> ?</p>
+<link type="text/css" rel="stylesheet" media="screen" href="./default.css" id="default-css" />
+<pre><code>kubectl get all -n grafana</code></pre><h1 id="to-get-the-loadbalancer-url">to get the loadbalancer url</h1>
+<p id="repository-visit">Do you want to visit the <a href="https://github.com/akhilrajmailbox/Prometheus-Grafana">Repository</a> ?</p>
+<pre><code>export ELB=$(kubectl get svc -n grafana grafana -o jsonpath=&#39;{.status.loadBalancer.ingress[0].hostname}&#39;)
+<link type="text/css" rel="stylesheet" media="screen" href="./default.css" id="default-css" />
+echo &quot;http://$ELB&quot;</code></pre><h1 id="to-get-the-password-for-admin-user">to get the password for admin user</h1>
+<p id="repository-visit">Do you want to visit the <a href="https://github.com/akhilrajmailbox/Prometheus-Grafana">Repository</a> ?</p>
+<pre><code>kubectl get secret --namespace grafana grafana -o jsonpath=&quot;{.data.admin-password}&quot; | base64 --decode ; echo</code></pre><pre><code>Login into Grafana dashboard using credentials supplied during configuration
+You will notice that ‘Install Grafana’ &amp; ‘create your first data source’ are already completed. We will import community created dashboard for this tutorial
+Click ‘+’ button on left panel and select ‘Import’
+Enter 3131 dashboard id under Grafana.com Dashboard &amp; click ‘Load’.
+Leave the defaults, select ‘Prometheus’ as the endpoint under prometheus data sources drop down, click ‘Import’.
+This will show monitoring dashboard for all cluster nodes
+For creating dashboard to monitor all pods, repeat same process as above and enter 3146 for dashboard id</code></pre><p><em>few dashboard id for kubernetes monitoring</em></p>
+<pre><code>3131
+3146
+8588
+1860
+1621</code></pre><h2 id="enable-the-alert">Enable the alert</h2>
+<p>After you deploy the grafana with helm, do the following steps to configure the Email Alerting. The grafana configuration is mounted to a configmap called &quot;grafana&quot; as a file &quot;grafana.ini&quot;.</p>
+<ul>
+<li>you can edit it by the following command and update it with the &quot;smtp&quot; configuration.</li>
+</ul>
+<pre><code>kubectl -n grafana edit configmap grafana</code></pre><ul>
+<li>update the following field with your details</li>
+</ul>
+<pre><code>  grafana.ini: |
+    [smtp]
+    enabled = true
+    host = smtp.gmail.com:465
+    user = yourmail@gmail.com
+    password = &lt;&lt;YouSecrets&gt;&gt;
+    cert_file =
+    key_file =
+    skip_verify = true
+    from_address = noreply@gmail.com
+    from_name = Grafana Admin
+    ....
+    ....
+    ....
+    ....
+    ....</code></pre><ul>
+<li>once you edit and save the configmap, then you have to redeploy the grafana, the simple way is just delete the pod.</li>
+</ul>
+<pre><code>kubectl -n grafana delete pods grafana-34fe34f3gv3-34f3w</code></pre><ul>
+<li>Go to grafana dashboard &gt; Alerting &gt; Notification Channel &gt; Add Channel &gt; test the email configuration, if you are getting some error then please check the logs for grafana pods.</li>
+</ul>
+<p><strong>Note : Don&#39;t forget to configure <a href="https://support.google.com/accounts/answer/6010255">allow less secure apps</a></strong></p>
+<p><a href="https://www.youtube.com/watch?v=j8CVsUEH1V4">reference video</a></p>
+<link type="text/css" rel="stylesheet" media="screen" href="./default.css" id="default-css" />
+<h1 id="delete-prometheus-and-grafana">Delete Prometheus and grafana</h1>
+<p id="repository-visit">Do you want to visit the <a href="https://github.com/akhilrajmailbox/Prometheus-Grafana">Repository</a> ?</p>
+<pre><code>helm delete prometheus
+helm del --purge prometheus
+helm delete grafana
+helm del --purge grafana</code></pre>
