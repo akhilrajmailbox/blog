@@ -1,18 +1,18 @@
 <link type="text/css" rel="stylesheet" media="screen" href="./default.css" id="default-css" />
 <h1 id="guestbook-on-kubernetes-production-ready">GuestBook on Kubernetes (Production Ready)</h1>
 <p id="repository-visit">Do you want to visit the <a href="https://github.com/akhilrajmailbox/GuestBook">Repository</a> ?</p>
-<h2 id="table-of-contents">Table of contents</h2>
+<h2 id="table-of-contents">table of Contents</h2>
 <!--ts-->
 <ul>
-<li><a href="#Requirement">Requirement</a></li>
-<li><a href="#highly-available-kubernetes-cluster">Highly available Kubernetes cluster</a></li>
-<li><a href="#CI-CD-pipeline-using-Jenkins">CI-CD pipeline using Jenkins</a></li>
-<li><a href="#Deploy-GuestBook-Application">Deploy GuestBook Application</a></li>
-<li><a href="#Prometheus-and-Grafana">Prometheus &amp; Grafana</a></li>
-<li><a href="#Elasticsearch-Fluentd-and-Kibana">EFK (Elasticsearch, Fluentd &amp; Kibana)</a></li>
-<li><a href="#Blue-Green-and-Canary-Deployment">Blue-Green and Canary Deployment</a><ul>
-<li><a href="#Blue-Green-Deployment-of-GuestBook-Application">Blue-Green Deployment of GuestBook Application</a></li>
-<li><a href="#Canary-Deployment-of-GuestBook-Application">Canary Deployment of GuestBook Application</a><ul>
+<li><a href="#requirement">Requirement</a></li>
+<li><a href="#highly-available-kubernetes-cluster">Highly Available Kubernetes Cluster</a></li>
+<li><a href="#ci-cd-pipeline-using-jenkins">CI-CD pipeline using Jenkins</a></li>
+<li><a href="#deploy-guestbook-application">Deploy Guestbook Application</a></li>
+<li><a href="#prometheus-and-grafana">Prometheus and Grafana</a></li>
+<li><a href="#elasticsearch-fluentd-and-kibana">EFK (Elasticsearch, Fluentd &amp; Kibana)</a></li>
+<li><a href="#blue-green-and-canary-deployment">Blue-Green and Canary Deployment</a><ul>
+<li><a href="#blue-green-deployment-of-guestBook-application">Blue-Green Deployment of GuestBook Application</a></li>
+<li><a href="#canary-deployment-of-guestBook-application">Canary Deployment of GuestBook Application</a><ul>
 <li><a href="#steps">steps</a><!--te-->
 
 
@@ -25,7 +25,7 @@
 </ul>
 </li>
 </ul>
-<h2 id="requirement">Requirement</h2>
+<h2 id="requirement">requirement</h2>
 <ol>
 <li><p>AWS Account</p>
 <ul>
@@ -45,13 +45,13 @@
 </ul>
 </li>
 </ol>
-<p><a href="#Table-of-contents">:hourglass: Table of contents</a></p>
+<p><a href="#table-of-contents">Table of contents</a></p>
 <h2 id="highly-available-kubernetes-cluster">highly available kubernetes cluster</h2>
 <pre><code>In this Demo, I&#39;m using kubespray with ansible to Create Multi-master/etcd cluster.</code></pre><p><a href="https://github.com/akhilrajmailbox/GuestBook/tree/master/kubespray-Install">Go here</a> and follow the steps for install and configure the HA K8s Cluster.</p>
 <p>You will find the scripts also there for configure the K8s Manager...!
 Note :: you have to configure the K8s Manager with <code>admin.conf</code> file once the k8s cluster created. you may need this in upcoming steps.</p>
-<p><a href="#Table-of-contents">:hourglass: Table of contents</a></p>
-<h2 id="ci-cd-pipeline-using-jenkins">CI-CD pipeline using Jenkins</h2>
+<p><a href="#table-of-contents">Table of contents</a></p>
+<h2 id="ci-cd-pipeline-using-jenkins">ci-cd pipeline using jenkins</h2>
 <p>Note : Assumning that you are successfully configured the Multi master Kubernetes Cluster (you  may required the admin.conf file from the previous steps.)</p>
 <p>Use one ubuntu 16.04 machine from the 9 machines which we created before. You can find the <a href="https://raw.githubusercontent.com/akhilrajmailbox/GuestBook/master/scripts/jenkins.sh">jenkins.sh</a> scripts under <code>scripts folder</code> for install and configure jenkins in ubuntu machine without any worries.</p>
 <ol>
@@ -74,8 +74,8 @@ NOTE : Assuming that you are already configured the helm in kubernetes cluster b
 <pre><code>$ helm init --client-only</code></pre><p>Once you configured the jenkins, you have to access it form web ui and need to do some basic setup for jenkins (adding some plugins and configuring admin password). You can use the public ip address of the jenkins machine to access the jenkins web ui.</p>
 <pre><code>http://JENKINS_SERVER_IP:8080</code></pre><p>Configure password for  <code>admin</code> user and seetup your jenkins.</p>
 <p>(incase if you are not able to access it check the security group of your instances -- ensure that 8080 port are able to access from outside)</p>
-<p><a href="#Table-of-contents">:hourglass: Table of contents</a></p>
-<h2 id="deploy-guestbook-application">Deploy GuestBook Application</h2>
+<p><a href="#table-of-contents">Table of contents</a></p>
+<h2 id="deploy-guestbook-application">deploy guestbook application</h2>
 <p>You can take a look into my <a href="https://github.com/akhilrajmailbox/GuestBook/tree/master/guestbook">Helm Chart</a>. </p>
 <p>There are lots of custom parameters I configured in order to customise the deployment with your needs, but for this demo, you don&#39;t need to do any parameter customisation and by default I gave all required parameters to the helm chart.</p>
 <p>In the coming steps (Blue/Green Deployment and Canary Deployment), you are going to use the same docker images and will update this deployment which you are going to deploy from jenkins.</p>
@@ -125,8 +125,8 @@ Healthy threshold       10</code></pre><p><em>listeners</em></p>
 </tr>
 </tbody></table>
 <p>Add your <code>K8s master</code> and <code>K8s slave</code> instances to the ELB, wait for some time and try to access the guestbook from outside with your AWS ELB address. (incase if you are not able to access it check the security group of your instances and AWS ELB -- ensure that all ports are able to access from outside)</p>
-<p><a href="#Table-of-contents">:hourglass: Table of contents</a></p>
-<h2 id="prometheus-and-grafana">Prometheus and Grafana</h2>
+<p><a href="#table-of-contents">Table of contents</a></p>
+<h2 id="prometheus-and-grafana">prometheus and grafana</h2>
 <p>Note : Assumning that you are successfully configured the Multi master Kubernetes Cluster and K8s Manager machine to connect to K8s cluster with kubectl and helm commands.</p>
 <p>run these two commands to ensure that you are able to access the kubernetes cluster from your <code>K8s Manager Machine</code>.</p>
 <p>ssh to <code>K8s Manager Machine</code></p>
@@ -185,10 +185,10 @@ Healthy threshold       10</code></pre><p><em>listeners</em></p>
 <td>N/A</td>
 </tr>
 </tbody></table>
-<p><a href="#Table-of-contents">:hourglass: Table of contents</a></p>
+<p><a href="#table-of-contents">Table of contents</a></p>
 <p>NOTE :: If your application not starting up, then check the logs for the pods. if tha is related to the <code>pvc</code>, then check the <code>rook</code> deployment, try to recreate it, the previous deployment for rook may be get failed due to lack of resources.</p>
 <p>delete all rook configuration and create it</p>
-<pre><code>kubectl delete -f rook-block/</code></pre><pre><code>kubectl get secret rook-rook-user -oyaml | sed &quot;/resourceVer/d;/uid/d;/self/d;/creat/d;/namespace/d&quot; | kubectl -n monitoring apply -f -</code></pre><h2 id="elasticsearch-fluentd-and-kibana">Elasticsearch Fluentd and Kibana</h2>
+<pre><code>kubectl delete -f rook-block/</code></pre><pre><code>kubectl get secret rook-rook-user -oyaml | sed &quot;/resourceVer/d;/uid/d;/self/d;/creat/d;/namespace/d&quot; | kubectl -n monitoring apply -f -</code></pre><h2 id="elasticsearch-fluentd-and-kibana">elasticsearch fluentd and kibana</h2>
 <p>You can deploy and Configure EFK in K8s Cluster by running the <a href="https://raw.githubusercontent.com/akhilrajmailbox/GuestBook/master/scripts/efk.sh">efk.sh</a> script.</p>
 <pre><code>$ cd GuestBook/scripts/
 $ ./efk.sh</code></pre><p>Once you deploy the <code>EFK</code> successfully, Kubernetes will automatically assign one <code>NodePort</code> to your application. You will get that NodePort from the output of about script with keyword <code>Kibana NodePort</code>. (you may need this for configuring the AWS ELB)</p>
@@ -220,8 +220,8 @@ Healthy threshold       10</code></pre><p><em>listeners</em></p>
 <td>N/A</td>
 </tr>
 </tbody></table>
-<p><a href="#Table-of-contents">:hourglass: Table of contents</a></p>
-<h2 id="blue-green-and-canary-deployment">Blue-Green and Canary Deployment</h2>
+<p><a href="#table-of-contents">Table of contents</a></p>
+<h2 id="blue-green-and-canary-deployment">blue-green and canary deployment</h2>
 <p>In this demo, we are upgrading the Guestbook Deployment which we did before. To show the demo, Im Changing the background color of the application. by default it is white , you saw it already if you deployed the Guestbook and you can access the latest Guestbook application with the same AWS ELB which you created before for the guestbook application.</p>
 <p>Please find the below table to understand the <code>Background Colour</code> for each strategy</p>
 <table>
@@ -240,12 +240,12 @@ Healthy threshold       10</code></pre><p><em>listeners</em></p>
 <td>Blue</td>
 </tr>
 </tbody></table>
-<h3 id="blue-green-deployment-of-guestbook-application">Blue-Green Deployment of GuestBook Application</h3>
+<h3 id="blue-green-deployment-of-guestbook-application">blue green deployment of guestBook application</h3>
 <p>Note :: Assuming that the GuestBook Application that you deployed from jenkins is up and running.</p>
 <p>You can deploy Latest version of <code>GuestBook</code> application in K8s Cluster by running the <a href="https://raw.githubusercontent.com/akhilrajmailbox/GuestBook/master/scripts/blue-green.sh">blue-green.sh</a> script.</p>
 <pre><code>$ cd GuestBook/scripts/
 $ ./blue-green.sh</code></pre><p>Once the deployment done with the <code>blue-green.sh</code> script, try to access the guestbook application with your Load Balancer, refresh many time to reflect your changes, or try from <code>incognito</code> to see the latest changes (green background colour) without any downtime.</p>
-<h3 id="canary-deployment-of-guestbook-application">Canary Deployment of GuestBook Application</h3>
+<h3 id="canary-deployment-of-guestbook-application">canary deployment of guestBook application</h3>
 <p>Note :: Assuming that the GuestBook Application is up and running with latest changes that you have done with <code>blue / green deployment</code>.</p>
 <p>You can deploy Latest version of <code>GuestBook</code> application in K8s Cluster by running the <a href="https://raw.githubusercontent.com/akhilrajmailbox/GuestBook/master/scripts/canary.sh">canary.sh</a> script.</p>
 <p>This script have 2 option, you must have to pass anyone of this option to run this script.</p>
@@ -261,4 +261,4 @@ $ ./canary.sh -o deploy</code></pre><p>Refresh your web page many time to see th
 </ol>
 <p>for that you can use the following command</p>
 <pre><code>$ cd GuestBook/scripts/
-$ ./canary.sh -o rollout</code></pre><p><a href="#Table-of-contents">:hourglass: Table of contents</a></p>
+$ ./canary.sh -o rollout</code></pre><p><a href="#table-of-contents">Table of contents</a></p>

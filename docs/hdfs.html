@@ -97,31 +97,36 @@ kubectl -n hdfs-cluster get pods</code></pre><h3 id="deploy-datanodes">Deploy da
 kubectl -n hdfs-cluster get pods</code></pre><p><strong>You can check the status for the hdfs cluster by accessing the service withc we created in namenode section (hdfs-webui)</strong></p>
 <h2 id="easy-commands">Easy Commands</h2>
 <ul>
-<li><p>to list all nodes in HDFS cluster (run within the cluster)</p>
-<pre><code>hadoop dfsadmin -report</code></pre></li>
-<li><p>service management on hdfs cluster</p>
-<pre><code>hadoop-daemon.sh start [namenode | secondarynamenode | datanode | jobtracker | tasktracker]</code></pre></li>
-<li><p>hdfs url to access </p>
-<pre><code>hdfs://&lt;namenode&gt;:&lt;ipc_port&gt;
-</code></pre></li>
+<li>to list all nodes in HDFS cluster (run within the cluster)</li>
 </ul>
-<p>example : hdfs://10.50.144.32:9000/</p>
-<pre><code>
-* Test write access to the Hadoop cluster
+<pre><code>hadoop dfsadmin -report</code></pre><ul>
+<li>service management on hdfs cluster</li>
+</ul>
+<pre><code>hadoop-daemon.sh start [namenode | secondarynamenode | datanode | jobtracker | tasktracker]</code></pre><ul>
+<li>hdfs url to access</li>
+</ul>
+<pre><code>hdfs://&lt;namenode&gt;:&lt;ipc_port&gt;
 
-* Listing Files in HDFS</code></pre><p>hadoop fs -ls hdfs://10.50.144.32:9000/</p>
-<pre><code>
-* Inserting Data into HDFS (Transfer and store a data file from local systems to the Hadoop file system using the put command)</code></pre><p>hadoop fs -mkdir hdfs://10.50.144.32:9000/input 
+example : hdfs://10.50.144.32:9000/</code></pre><ul>
+<li><p>Test write access to the Hadoop cluster</p>
+</li>
+<li><p>Listing Files in HDFS</p>
+</li>
+</ul>
+<pre><code>hadoop fs -ls hdfs://10.50.144.32:9000/</code></pre><ul>
+<li>Inserting Data into HDFS (Transfer and store a data file from local systems to the Hadoop file system using the put command)</li>
+</ul>
+<pre><code>hadoop fs -mkdir hdfs://10.50.144.32:9000/input 
 hadoop fs -put /path/to/file.txt hdfs://10.50.144.32:9000/input
-hadoop fs -ls hdfs://10.50.144.32:9000/input</p>
-<pre><code>
-* Retrieving Data from HDFS</code></pre><p>hadoop fs -cat hdfs://10.50.144.32:9000/input/file.txt
-hadoop fs -get hdfs://10.50.144.32:9000/input/file.txt /tmp/</p>
-<pre><code>
-* Delete data from HDFS (files and directory)</code></pre><p>hadoop fs -rm hdfs://10.50.144.32:9000/input/file.txt
-hadoop fs -rm -r hdfs://10.50.144.32:9000/input</p>
-<p>```</p>
-<p><strong>If Hadoop CLI does not return an error message, then your setup is correct</strong></p>
+hadoop fs -ls hdfs://10.50.144.32:9000/input</code></pre><ul>
+<li>Retrieving Data from HDFS</li>
+</ul>
+<pre><code>hadoop fs -cat hdfs://10.50.144.32:9000/input/file.txt
+hadoop fs -get hdfs://10.50.144.32:9000/input/file.txt /tmp/</code></pre><ul>
+<li>Delete data from HDFS (files and directory)</li>
+</ul>
+<pre><code>hadoop fs -rm hdfs://10.50.144.32:9000/input/file.txt
+hadoop fs -rm -r hdfs://10.50.144.32:9000/input</code></pre><p><strong>If Hadoop CLI does not return an error message, then your setup is correct</strong></p>
 <h2 id="reference-docs">Reference Docs</h2>
 <p><a href="https://www.linode.com/docs/databases/hadoop/how-to-install-and-set-up-hadoop-cluster/">reference</a></p>
 <p><a href="https://www.tutorialspoint.com/hadoop/hadoop_multi_node_cluster.htm">reference</a></p>

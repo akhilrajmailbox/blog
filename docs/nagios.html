@@ -121,27 +121,29 @@ ENDPOINT=$(kubectl config view -o jsonpath=&quot;{.clusters[?(@.name == \&quot;$
 <p><code>Example Plugin name :  check_vpn</code></p>
 <h3 id="nagios-client-side-configurations">Nagios client side configurations</h3>
 <ul>
-<li><p>create a shell script with name <code>check_vpn</code></p>
+<li>create a shell script with name <code>check_vpn</code></li>
+</ul>
 <pre><code>#!/bin/bash
 VPN_IPAddress=$1
 if ping -c1 $VPN_IPAddress &gt; /dev/null; then
-              echo &quot;OK - VPN is up&quot;
-              exit 0
-      else
-              echo &quot;CRITICAL - VPN is down&quot;
-              exit 2
-fi</code></pre></li>
-<li><p>update the nrpe.cfg</p>
+                echo &quot;OK - VPN is up&quot;
+                exit 0
+        else
+                echo &quot;CRITICAL - VPN is down&quot;
+                exit 2
+fi</code></pre><ul>
+<li>update the nrpe.cfg</li>
+</ul>
 <pre><code>dont_blame_nrpe=1
-command[my_vpn]=/usr/lib/nagios/plugins/check_vpn $ARG1$</code></pre></li>
-<li><p>add the scripts to <code>plugins</code> folder</p>
+command[my_vpn]=/usr/lib/nagios/plugins/check_vpn $ARG1$</code></pre><ul>
+<li>add the scripts to <code>plugins</code> folder</li>
+</ul>
 <pre><code>cd /usr/lib/nagios/plugins/
 chmod a+x check_vpn/usr/lib/nagios/plugins/check_vpn
-service nagios-nrpe-server restart</code></pre></li>
-<li><p>test the plugin</p>
-<pre><code>/usr/lib/nagios/plugins/check_vpn 159.232.1.1</code></pre></li>
+service nagios-nrpe-server restart</code></pre><ul>
+<li>test the plugin</li>
 </ul>
-<h3 id="nagios-server-side-configurations">Nagios server side configurations</h3>
+<pre><code>/usr/lib/nagios/plugins/check_vpn 159.232.1.1</code></pre><h3 id="nagios-server-side-configurations">Nagios server side configurations</h3>
 <ul>
 <li>configure a custom command entry to use check_vpn script / plugin in the remote machine</li>
 </ul>
