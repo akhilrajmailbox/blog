@@ -91,6 +91,14 @@ p a, li a {
   font-weight: bold;
 }
 
+#repository-visit a {
+  background-image: linear-gradient(92deg, #f35626 0%,#feab3a 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: hue 10s infinite linear;
+}
+
 pre {
   background: #303030;
   color: #f1f1f1;
@@ -142,4 +150,16 @@ table th {
   background-color: rgb(126, 121, 121);
   /* background-image: linear-gradient(to bottom, rgb(215, 224, 219), rgb(57, 99, 55)); */
   color: white;
+}
+
+
+
+@keyframes hue {
+  from {
+    filter: hue-rotate(0deg);
+  }
+
+  to {
+    filter: hue-rotate(-360deg);
+  }
 }
