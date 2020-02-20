@@ -1,6 +1,22 @@
 <link type="text/css" rel="stylesheet" media="screen" href="./default.css" id="default-css" />
 <h1 id="hyperledger-fabric-on-kubernetes">Hyperledger Fabric on Kubernetes</h1>
 <p id="repository-visit">Do you want to visit the <a href="https://github.com/akhilrajmailbox/Hyperledger-Fabric">Repository</a> ?</p>
+<p>Hyperledger Fabric is a platform for distributed ledger solutions underpinned by a modular architecture delivering high degrees of confidentiality, resiliency, flexibility, and scalability. It is designed to support pluggable implementations of different components and accommodate the complexity and intricacies that exist across the economic ecosystem.</p>
+<h2 id="what-is-a-blockchain">What is a Blockchain?</h2>
+<p>Its better you can read the complete <a href="https://hyperledger-fabric.readthedocs.io/en/release-1.4/blockchain.html">docs</a> before jimp into the deployment.</p>
+<h3 id="a-distributed-ledger">A Distributed Ledger</h3>
+<p>At the heart of a blockchain network is a distributed ledger that records all the transactions that take place on the network.</p>
+<p>A blockchain ledger is often described as decentralized because it is replicated across many network participants, each of whom collaborate in its maintenance. We’ll see that decentralization and collaboration are powerful attributes that mirror the way businesses exchange goods and services in the real world.</p>
+<h3 id="smart-contracts">Smart Contracts</h3>
+<p>To support the consistent update of information — and to enable a whole host of ledger functions (transacting, querying, etc) — a blockchain network uses smart contracts to provide controlled access to the ledger.</p>
+<p>Smart contracts are not only a key mechanism for encapsulating information and keeping it simple across the network, they can also be written to allow participants to execute certain aspects of transactions automatically.</p>
+<h3 id="consensus">Consensus</h3>
+<p>The process of keeping the ledger transactions synchronized across the network — to ensure that ledgers update only when transactions are approved by the appropriate participants, and that when ledgers do update, they update with the same transactions in the same order — is called consensus.</p>
+<p><strong>Note :</strong> For Hyperledger Fabric Deployment, please run the commands <a href="https://raw.githubusercontent.com/akhilrajmailbox/Hyperledger-Fabric/master/MyProd/hlf.sh">./hlf.sh -o options</a> within <a href="https://github.com/akhilrajmailbox/Hyperledger-Fabric/tree/master/MyProd">MyProd folder</a></p>
+<h2 id="hardcoded-environment-variables-in-the-shell-script-hlfsh">Hardcoded Environment Variables in the shell script <code>hlf.sh</code></h2>
+<pre><code>export CUSTOM_PEERS=&quot;1 2 3 4&quot;
+export ANCHOR_PEERS=&quot;1 2&quot;
+export CUSTOM_ORG_NUMS=&quot;1 2&quot;</code></pre><p>These hardcoded values can be changed according to your cluster size, in this example we configured a cluster of 4 peers per org and out of 4 peers 2 peers are configured as anchor peer</p>
 <h2 id="production-deployment">Production Deployment</h2>
 <p><a href="https://hyperledger-fabric.readthedocs.io">hyperledger fabric docs</a></p>
 <p><a href="#https://github.com/IBM/blockchain-network-on-kubernetes.git">hlf on k8s</a></p>
@@ -329,7 +345,9 @@ TwoOrgsChannel  :   Channel for both Org1 and Org2, Inter Communication between 
 <p>Once you created the channel in the fabric network with the above command, then you have to join the needed peers from each organisation to communicate with eachother.</p>
 <pre><code>./hlf.sh -o channel-join</code></pre><h4 id="list-the-channels-in-a-peer">List the channels in a peer</h4>
 <p>List all channels which a particular peer has joined.</p>
-<pre><code>./hlf.sh -o channel-ls</code></pre><h2 id="first-time-deployment-">First Time Deployment :</h2>
+<pre><code>./hlf.sh -o channel-ls</code></pre><h2 id="configure-tlscerts-configuration">Configure <code>tlscerts</code> configuration</h2>
+<p><a href="#https://github.com/Blockdaemon/fabric-ca/blob/gerrit-pr-29430/docs/source/operations_guide.rst">tlscerts</a></p>
+<h2 id="first-time-deployment-">First Time Deployment :</h2>
 <pre><code>./hlf.sh -o initial
 ./hlf.sh -o cert-manager
 ./hlf.sh -o fabric-ca
@@ -355,4 +373,18 @@ sudo rm -rf kafka.tgz
 sudo curl https://raw.githubusercontent.com/akhilrajmailbox/Hyperledger-Fabric-K8s/master/MyProd/extra/kafka-mytopic.sh -o /opt/kafka/bin/kafka-mytopic.sh
 sudo chmod a+x /opt/kafka/bin/kafka-mytopic.sh
 cd /opt/kafka/bin/  ## update your zookeeper ip address in the script : kafka-mytopic.sh
-./kafka-mytopic.sh -o [OPTION...]</code></pre>
+./kafka-mytopic.sh -o [OPTION...]</code></pre><h3 id="helm-charts-repository-creation-steps">helm charts repository creation steps.</h3>
+<p>How It Works</p>
+<p>Create github repository and create docs folder in root directory.</p>
+<p>The docs folder contains index.html file</p>
+<p>set up GitHub Pages to point to the docs folder.</p>
+<p>From there, I can create and publish docs like this:</p>
+<pre><code>$ helm create hlf-ca
+$ cd hlf-ca ; helm dependency update ; cd -
+$ helm package hlf-ca
+$ mv hlf-ca-0.1.0.tgz docs
+$ helm repo index docs --url https://akhilrajmailbox.github.io/Hyperledger-Fabric/docs
+$ git add .
+$ git commit -m &quot;updated&quot; -av
+$ git push origin master</code></pre><p>add helm repo to your system and install.</p>
+<pre><code>$ helm repo add ar-repo https://akhilrajmailbox.github.io/Hyperledger-Fabric/docs</code></pre>
