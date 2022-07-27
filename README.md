@@ -1,4 +1,3 @@
 # blog
 
-
-[my-blog](https://blog.akhilraj.me/)
+[my-blog](https://blog.akhilraj.xyz/)
